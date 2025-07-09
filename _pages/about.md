@@ -29,13 +29,6 @@ His main lines of research are:
 
 ## Contact
 
-[Universidad La Salle Bajío](https://www.lasallebajio.edu.mx/)
-Dirección de Investigación y Doctorado
-Facultad de Ingenierías y Tecnologías 
-+52 (477) 7 10 85 00, ext. 2600
-[eovalle@lasallebajio.edu.mx](mailto:eovalle@lasallebajio.edu.mx)
-Av. Universidad 602
-Col. Lomas del Campestre
-C.P. 37150, León, Guanajuato, México
+[Universidad La Salle Bajío](https://www.lasallebajio.edu.mx/), Dirección de Investigación y Doctorado, Facultad de Ingenierías y Tecnologías, +52 (477) 7 10 85 00, ext. 2600,  [eovalle@lasallebajio.edu.mx](mailto:eovalle@lasallebajio.edu.mx), Av. Universidad 602, Col. Lomas del Campestre, C.P. 37150, León, Guanajuato, México
 
 
