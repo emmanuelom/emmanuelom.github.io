@@ -21,7 +21,7 @@ repository               : "academicpages/emmanuelom.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "bio-photo-eom.jpg" # This is the image that will appear in the sidebar
+  avatar           : "me.JPG" # This is the image that will appear in the sidebar
   name             : "Emmanuel Ovalle Magallanes" # This is the name that will appear in the sidebar
   pronouns         : # example: "she/her"  
   bio              : "Full-time Researcher"
