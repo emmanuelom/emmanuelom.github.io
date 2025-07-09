@@ -11,7 +11,7 @@ locale                   : "en-US"
 title                    : "Emmanuel Ovalle Magallanes"
 title_separator          : "-"
 name                     : &name "Emmanuel Ovalle Magallanes" # This is the name that will appear in the title tag and in the sidebar
-description              : &description "Full-time Researcher at University of La Salle Bajío."
+description              : &description "Full-time Researcher"
 url                      : https://emmanuelom.github.io # the base hostname & protocol for your site e.g. "https://[your GitHub username].github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "academicpages/emmanuelom.github.io"
@@ -24,11 +24,11 @@ author:
   avatar           : "bio-photo-eom.jpg" # This is the image that will appear in the sidebar
   name             : "Emmanuel Ovalle Magallanes" # This is the name that will appear in the sidebar
   pronouns         : # example: "she/her"  
-  bio              : "Full-time Researcher at University of La Salle Bajío."
+  bio              : "Full-time Researcher"
   location         : "León, Guanajuato, Mexico" # This is the location that will appear in the sidebar
   employer         : "University of La Salle Bajío" # This is the employer that will appear in the sidebar
   uri              : # URL
-  email            : "eovalle@lasalle.edu.mx"
+  email            : "eovalle@lasallebajio.edu.mx"
 
   # Academic websites
   arxiv            : # URL - Update with the correct link to your profile
