@@ -1,6 +1,7 @@
 ---
 title: "LCAM-Net: Local Context Attention Network for Diabetic Retinopathy Severity Classification"
 collection: publications
+category: conferences
 permalink: /publication/2024-06-01-LCAM-Net-Local-Context-Attention-Network-for-Diabetic-Retinopathy-Severity-Classification
 date: 2024-06-01
 venue: "Mexican Conference on Pattern Recognition"

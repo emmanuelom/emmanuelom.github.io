@@ -1,6 +1,7 @@
 ---
 title: "A Lightweight Diffusion Model with Modified Sampler"
 collection: publications
+category: conferences
 permalink: /publication/2025-06-01-A-Lightweight-Diffusion-Model-with-Modified-Sampler
 date: 2025-06-01
 venue: "Mexican Conference on Pattern Recognition"

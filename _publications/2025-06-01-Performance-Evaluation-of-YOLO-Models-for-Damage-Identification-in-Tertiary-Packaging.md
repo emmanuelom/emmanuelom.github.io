@@ -1,6 +1,7 @@
 ---
 title: "Performance Evaluation of YOLO Models for Damage Identification in Tertiary Packaging"
 collection: publications
+category: manuscripts
 permalink: /publication/2025-06-01-Performance-Evaluation-of-YOLO-Models-for-Damage-Identification-in-Tertiary-Packaging
 date: 2025-06-01
 venue: "Signal, Image and Video Processing"

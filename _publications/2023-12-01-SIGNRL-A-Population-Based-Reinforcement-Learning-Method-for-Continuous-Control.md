@@ -1,6 +1,7 @@
 ---
 title: "SIGNRL: A Population-Based Reinforcement Learning Method for Continuous Control"
 collection: publications
+category: conferences
 permalink: /publication/2023-12-01-SIGNRL-A-Population-Based-Reinforcement-Learning-Method-for-Continuous-Control
 date: 2023-12-01
 venue: "2023 IEEE Symposium Series on Computational Intelligence (SSCI)"

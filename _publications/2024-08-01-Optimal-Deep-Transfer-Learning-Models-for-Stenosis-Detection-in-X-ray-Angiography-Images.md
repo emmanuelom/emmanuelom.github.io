@@ -1,6 +1,7 @@
 ---
 title: "Optimal Deep Transfer Learning Models for Stenosis Detection in X-ray Angiography Images"
 collection: publications
+category: manuscripts
 permalink: /publication/2024-08-01-Optimal-Deep-Transfer-Learning-Models-for-Stenosis-Detection-in-X-ray-Angiography-Images
 date: 2024-08-01
 venue: "Advances in Intelligent Disease Diagnosis and Treatment"

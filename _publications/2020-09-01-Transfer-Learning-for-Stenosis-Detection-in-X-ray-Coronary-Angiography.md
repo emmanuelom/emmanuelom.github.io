@@ -2,6 +2,7 @@
 title: "Transfer Learning for Stenosis Detection in X-ray Coronary Angiography"
 collection: publications
 permalink: /publication/2020-09-01-Transfer-Learning-for-Stenosis-Detection-in-X-ray-Coronary-Angiography
+category: manuscripts
 date: 2020-09-01
 venue: "Mathematics"
 citation: "Transfer Learning for Stenosis Detection in X-ray Coronary Angiography. *Mathematics*, 2020. https://doi.org/10.3390/math8091510"
