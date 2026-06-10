@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Learning — Clase Interactiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #0d0f14;
+  --bg2:      #13161e;
+  --bg3:      #1a1e2a;
+  --border:   #252a38;
+  --blue:     #4f8ef7;
+  --green:    #39d98a;
+  --purple:   #a855f7;
+  --orange:   #f97316;
+  --text:     #e8eaf0;
+  --muted:    #7a7f94;
+  --mono:     'JetBrains Mono', monospace;
+  --sans:     'Inter', sans-serif;
+  --display:  'Space Grotesk', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* ─── SCROLLBAR ─────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ─── XP HUD ────────────────────────────────── */
+#hud {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(13,15,20,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+#hud .title {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+#xp-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+#xp-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(.4,0,.2,1);
+}
+
+#xp-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+#level-badge {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: white;
+  white-space: nowrap;
+}
+
+.progress-dots {
+  display: flex;
+  gap: 6px;
+}
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.dot.done { background: var(--green); }
+.dot.active { background: var(--blue); }
+
+/* ─── HERO ──────────────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+#nn-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--blue);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.hero-h1 {
+  font-family: var(--display);
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.hero-h1 .accent { color: var(--blue); }
+.hero-h1 .accent2 { color: var(--purple); }
+
+.hero-sub {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 520px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+.btn-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--blue);
+  color: white;
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 0 32px rgba(79,142,247,0.35);
+}
+.btn-start:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 48px rgba(79,142,247,0.5);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 56px;
+  position: relative;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+}
+.stat-lbl {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ─── SECTIONS ──────────────────────────────── */
+.section {
+  padding: 80px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-tag::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue);
+}
+
+.section-h2 {
+  font-family: var(--display);
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+  line-height: 1.15;
+}
+
+.section-lead {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 600px;
+  margin-bottom: 40px;
+  line-height: 1.7;
+}
+
+/* ─── CARDS ─────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover {
+  border-color: var(--blue);
+  transform: translateY(-2px);
+}
+
+.card-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: white;
+}
+.card-body {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ─── TIMELINE ──────────────────────────────── */
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--blue), var(--purple), transparent);
+}
+
+.tl-item {
+  position: relative;
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateX(-16px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.tl-item.visible { opacity: 1; transform: none; }
+
+.tl-dot {
+  position: absolute;
+  left: -28px;
+  top: 4px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--blue);
+}
+
+.tl-year {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+.tl-text {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.tl-text strong { color: var(--text); }
+
+/* ─── NEURONA INTERACTIVA ────────────────────── */
+#neurona-demo {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  margin: 32px 0;
+}
+
+#neurona-canvas {
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  background: var(--bg3);
+  margin-bottom: 24px;
+  display: block;
+}
+
+.sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.slider-group label span {
+  color: var(--blue);
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--border);
+  border-radius: 99px;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--blue);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+.act-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.pill {
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pill:hover { border-color: var(--blue); color: var(--text); }
+.pill.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+  font-weight: 500;
+}
+
+.neuron-output {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.output-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.output-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.output-value {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--green);
+}
+
+/* ─── CODE BLOCKS ────────────────────────────── */
+.code-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 24px 0;
+}
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+}
+.code-dots { display: flex; gap: 6px; }
+.code-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.code-dots .r { background: #ff5f57; }
+.code-dots .y { background: #febc2e; }
+.code-dots .g { background: #28c840; }
+
+.code-file {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.code-copy {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.code-copy:hover { border-color: var(--blue); color: var(--blue); }
+
+pre.code {
+  padding: 20px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-x: auto;
+  color: #cdd6f4;
+}
+
+.kw  { color: #cba6f7; }
+.fn  { color: #89b4fa; }
+.cm  { color: #6c7086; font-style: italic; }
+.st  { color: #a6e3a1; }
+.nm  { color: #fab387; }
+.cls { color: #f9e2af; }
+
+/* ─── QUIZ ───────────────────────────────────── */
+#quiz-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 32px;
+  margin: 32px 0;
+}
+
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.quiz-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+}
+.quiz-progress-text {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.quiz-question {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-option {
+  padding: 14px 18px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--muted);
+  text-align: left;
+  transition: all 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.quiz-option:hover:not(.answered) {
+  border-color: var(--blue);
+  color: var(--text);
+}
+.quiz-option.correct {
+  border-color: var(--green);
+  background: rgba(57,217,138,0.08);
+  color: var(--green);
+}
+.quiz-option.wrong {
+  border-color: #ef4444;
+  background: rgba(239,68,68,0.08);
+  color: #ef4444;
+}
+.quiz-option.answered { cursor: default; }
+
+.quiz-feedback {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok {
+  background: rgba(57,217,138,0.1);
+  border: 1px solid rgba(57,217,138,0.3);
+  color: var(--green);
+}
+.quiz-feedback.fail {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #ef4444;
+}
+
+.quiz-next-btn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: none;
+  transition: opacity 0.2s;
+}
+.quiz-next-btn.show { display: inline-flex; align-items: center; gap: 6px; }
+.quiz-next-btn:hover { opacity: 0.85; }
+
+.xp-toast {
+  position: fixed;
+  top: 64px;
+  right: 24px;
+  background: var(--bg2);
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--green);
+  z-index: 9999;
+  transform: translateY(-20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s;
+}
+.xp-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ─── DIVIDER ────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* ─── TRAINING VIZ ───────────────────────────── */
+#train-canvas {
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: block;
+  margin: 24px 0;
+}
+
+.train-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.btn-action {
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--blue); color: white; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.btn-secondary:hover { border-color: var(--blue); color: var(--text); }
+
+.train-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.train-stat-item {
+  display: flex;
+  flex-direction: column;
+}
+.tsil { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.tsiv {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* ─── FOOTER ─────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+footer a { color: var(--blue); text-decoration: none; }
+
+/* ─── SCROLL ANIMATIONS ──────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── ACHIEVEMENT POPUP ──────────────────────── */
+#achievement-popup {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--bg2);
+  border: 1px solid var(--purple);
+  border-radius: 16px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+  min-width: 300px;
+}
+#achievement-popup.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.ach-icon { font-size: 28px; }
+.ach-title {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--purple);
+  margin-bottom: 2px;
+}
+.ach-desc { font-size: 12px; color: var(--muted); }
+
+</style>
+</head>
+<body>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="title">⚡ DL Academy</div>
+  <div id="xp-bar-wrap"><div id="xp-bar"></div></div>
+  <div id="xp-label">0 / 500 XP</div>
+  <div id="level-badge">Nivel 1</div>
+  <div class="progress-dots" id="progress-dots">
+    <div class="dot active" title="¿Qué es DL?"></div>
+    <div class="dot" title="La neurona"></div>
+    <div class="dot" title="Red neuronal"></div>
+    <div class="dot" title="PyTorch"></div>
+    <div class="dot" title="Entrenamiento"></div>
+    <div class="dot" title="Quiz Final"></div>
+  </div>
+</div>
+
+<!-- XP Toast -->
+<div class="xp-toast" id="xp-toast">+50 XP</div>
+
+<!-- Achievement Popup -->
+<div id="achievement-popup">
+  <div class="ach-icon" id="ach-icon">🏆</div>
+  <div>
+    <div class="ach-title" id="ach-title">¡Logro desbloqueado!</div>
+    <div class="ach-desc" id="ach-desc">Descripción</div>
+  </div>
+</div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <canvas id="nn-bg"></canvas>
+  <div style="position:relative;z-index:1">
+    <p class="hero-eyebrow">Licenciatura · IA & Machine Learning</p>
+    <h1 class="hero-h1">
+      Aprende<br>
+      <span class="accent">Deep</span> <span class="accent2">Learning</span>
+    </h1>
+    <p class="hero-sub">
+      Clase gamificada de redes neuronales con PyTorch. Gana XP, desbloquea logros y construye intuición real.
+    </p>
+    <a href="#seccion-1" class="btn-start">
+      Comenzar →
+    </a>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num" id="cnt-sections">6</div>
+        <div class="stat-lbl">Secciones</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">500</div>
+        <div class="stat-lbl">XP disponibles</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">12</div>
+        <div class="stat-lbl">Ejercicios</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECCIÓN 1: QUÉ ES DL ═══════════════ -->
+<section class="section" id="seccion-1">
+  <div class="section-tag">Sección 01</div>
+  <h2 class="section-h2">¿Qué es el Deep Learning?</h2>
+  <p class="section-lead">
+    El deep learning es una rama del Machine Learning que usa redes neuronales con <strong>múltiples capas</strong> para aprender representaciones jerárquicas de los datos — sin features diseñadas a mano.
+  </p>
+
+  <div class="card-grid reveal">
+    <div class="card">
+      <div class="card-icon">📦</div>
+      <div class="card-title">Aprende de datos crudos</div>
+      <div class="card-body">Imágenes, texto, audio — sin necesitar ingeniería manual de features. La red descubre qué importa.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏗️</div>
+      <div class="card-title">Capas profundas</div>
+      <div class="card-body">Cada capa extrae representaciones más abstractas: bordes → texturas → formas → objetos.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧬</div>
+      <div class="card-title">Inspiración biológica</div>
+      <div class="card-body">Modela (libremente) las conexiones sinápticas del cerebro. Las neuronas se activan según el estímulo.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:8px" class="reveal">
+    <div>
+      <p style="font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:16px;color:white">ML Clásico vs Deep Learning</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:8px 0;color:var(--muted);font-weight:500"></th>
+          <th style="text-align:left;padding:8px 0;color:var(--blue);font-weight:500">ML Clásico</th>
+          <th style="text-align:left;padding:8px 0;color:var(--purple);font-weight:500">Deep Learning</th>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 0;color:var(--muted)">Features</td>
+          <td style="padding:8px 0;color:var(--text)">Manuales</td>
+          <td style="padding:8px 0;color:var(--text)">Automáticas</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 0;color:var(--muted)">Datos</td>
+          <td style="padding:8px 0;color:var(--text)">Pocos</td>
+          <td style="padding:8px 0;color:var(--text)">Muchos</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 0;color:var(--muted)">Cómputo</td>
+          <td style="padding:8px 0;color:var(--text)">CPU</td>
+          <td style="padding:8px 0;color:var(--text)">GPU</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:var(--muted)">Ejemplo</td>
+          <td style="padding:8px 0;color:var(--text)">SVM + HOG</td>
+          <td style="padding:8px 0;color:var(--text)">CNN end-to-end</td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <p style="font-family:var(--display);font-size:15px;font-weight:600;margin-bottom:16px;color:white">Hitos históricos</p>
+      <div class="timeline" id="tl">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1943</div>
+          <div class="tl-text"><strong>McCulloch & Pitts</strong> — primer modelo matemático de neurona</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1986</div>
+          <div class="tl-text"><strong>Backpropagation</strong> — Rumelhart, Hinton, Williams</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2012</div>
+          <div class="tl-text"><strong>AlexNet</strong> — revolución en visión por computadora</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2017</div>
+          <div class="tl-text"><strong>Transformers</strong> — "Attention is All You Need"</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">Hoy</div>
+          <div class="tl-text"><strong>LLMs, difusión</strong> — ChatGPT, Stable Diffusion, AlphaFold</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECCIÓN 2: LA NEURONA ═══════════════ -->
+<section class="section" id="seccion-2">
+  <div class="section-tag">Sección 02</div>
+  <h2 class="section-h2">La neurona artificial</h2>
+  <p class="section-lead">
+    Una neurona recibe entradas, las pondera con pesos, suma un sesgo y aplica una función de activación.
+    Arrastra los sliders y observa cómo cambia la salida en tiempo real.
+  </p>
+
+  <div id="neurona-demo" class="reveal">
+    <canvas id="neurona-canvas"></canvas>
+    <div class="sliders-grid">
+      <div class="slider-group">
+        <label>Entrada x₁ <span id="x1v">1.0</span></label>
+        <input type="range" min="-3" max="3" step="0.1" value="1.0" id="sl-x1" oninput="updateNeuron()">
+      </div>
+      <div class="slider-group">
+        <label>Entrada x₂ <span id="x2v">0.5</span></label>
+        <input type="range" min="-3" max="3" step="0.1" value="0.5" id="sl-x2" oninput="updateNeuron()">
+      </div>
+      <div class="slider-group">
+        <label>Peso w₁ <span id="w1v">0.8</span></label>
+        <input type="range" min="-3" max="3" step="0.1" value="0.8" id="sl-w1" oninput="updateNeuron()">
+      </div>
+      <div class="slider-group">
+        <label>Peso w₂ <span id="w2v">-0.5</span></label>
+        <input type="range" min="-3" max="3" step="0.1" value="-0.5" id="sl-w2" oninput="updateNeuron()">
+      </div>
+      <div class="slider-group">
+        <label>Bias b <span id="bv">0.2</span></label>
+        <input type="range" min="-3" max="3" step="0.1" value="0.2" id="sl-b" oninput="updateNeuron()">
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);font-family:var(--mono);margin-bottom:10px">Función de activación:</p>
+    <div class="act-pills">
+      <button class="pill active" onclick="setAct('sigmoid',this)">Sigmoid</button>
+      <button class="pill" onclick="setAct('relu',this)">ReLU</button>
+      <button class="pill" onclick="setAct('tanh',this)">Tanh</button>
+      <button class="pill" onclick="setAct('linear',this)">Lineal</button>
+    </div>
+    <div class="neuron-output">
+      <div class="output-box">
+        <div class="output-label">z = w₁x₁ + w₂x₂ + b</div>
+        <div class="output-value" id="z-out">—</div>
+      </div>
+      <div class="output-box">
+        <div class="output-label">ŷ = f(z)</div>
+        <div class="output-value" id="y-out">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="code-file">neurona.py</div>
+      <button class="code-copy" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre class="code"><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">sigmoid</span>(z): <span class="kw">return</span> <span class="nm">1</span> / (<span class="nm">1</span> + np.exp(-z))
+<span class="kw">def</span> <span class="fn">relu</span>(z):    <span class="kw">return</span> np.maximum(<span class="nm">0</span>, z)
+
+<span class="kw">def</span> <span class="fn">neurona</span>(x, w, b, f=sigmoid):
+    <span class="cm">"""
+    x : vector de entradas  (n,)
+    w : vector de pesos     (n,)
+    b : sesgo escalar
+    f : función de activación
+    """</span>
+    z = np.dot(w, x) + b    <span class="cm"># suma ponderada</span>
+    <span class="kw">return</span> z, f(z)           <span class="cm"># (pre-activación, salida)</span>
+
+<span class="cm"># Ejemplo</span>
+x = np.array([<span class="nm">1.0</span>, <span class="nm">0.5</span>])
+w = np.array([<span class="nm">0.8</span>, <span class="nm">-0.5</span>])
+z, y_hat = <span class="fn">neurona</span>(x, w, b=<span class="nm">0.2</span>)
+<span class="fn">print</span>(<span class="st">f"z={z:.3f}  ŷ={y_hat:.3f}"</span>)</pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECCIÓN 3: RED NEURONAL ═══════════════ -->
+<section class="section" id="seccion-3">
+  <div class="section-tag">Sección 03</div>
+  <h2 class="section-h2">Red neuronal multicapa (MLP)</h2>
+  <p class="section-lead">
+    Un MLP apila capas de neuronas. La información fluye del input al output en el <em>forward pass</em>.
+    Haz clic en las neuronas para ver sus conexiones activarse.
+  </p>
+
+  <canvas id="mlp-canvas" style="width:100%;height:280px;border-radius:16px;background:var(--bg3);border:1px solid var(--border);display:block;margin:24px 0;cursor:pointer" class="reveal"></canvas>
+
+  <div class="card-grid reveal">
+    <div class="card">
+      <div class="card-title">Notación matricial</div>
+      <div class="card-body" style="font-family:var(--mono);font-size:13px;line-height:2.2">
+        <span style="color:var(--green)">h</span> = f(W¹<span style="color:var(--blue)">x</span> + b¹)<br>
+        <span style="color:var(--purple)">ŷ</span> = g(W²<span style="color:var(--green)">h</span> + b²)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Teorema de Aproximación Universal</div>
+      <div class="card-body">Una red con al menos una capa oculta suficientemente grande puede aproximar <em>cualquier función continua</em>. Más capas = jerarquías más eficientes.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Hiperparámetros clave</div>
+      <div class="card-body" style="font-size:12px">
+        <div style="margin-bottom:6px">📐 <strong>Profundidad</strong> — número de capas</div>
+        <div style="margin-bottom:6px">↔️ <strong>Ancho</strong> — neuronas por capa</div>
+        <div style="margin-bottom:6px">⚡ <strong>Activación</strong> — ReLU, Sigmoid…</div>
+        <div>🎯 <strong>Loss</strong> — MSE, CrossEntropy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECCIÓN 4: PYTORCH ═══════════════ -->
+<section class="section" id="seccion-4">
+  <div class="section-tag">Sección 04</div>
+  <h2 class="section-h2">Introducción a PyTorch</h2>
+  <p class="section-lead">
+    PyTorch usa tensores (como arrays NumPy) y calcula gradientes automáticamente con <code style="font-family:var(--mono);color:var(--blue)">autograd</code>. Así podemos entrenar redes con unas pocas líneas.
+  </p>
+
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="code-file">tensores.py</div>
+      <button class="code-copy" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre class="code"><span class="kw">import</span> torch
+
+<span class="cm"># Crear tensores</span>
+x = torch.tensor([<span class="nm">1.0</span>, <span class="nm">2.0</span>, <span class="nm">3.0</span>])
+A = torch.randn(<span class="nm">3</span>, <span class="nm">4</span>)          <span class="cm"># matriz 3×4 aleatoria</span>
+b = torch.zeros(<span class="nm">4</span>)             <span class="cm"># vector de ceros</span>
+
+<span class="cm"># Operaciones (igual que NumPy)</span>
+y = A.T @ x + b                <span class="cm"># shape: (4,)</span>
+
+<span class="cm"># ── Autograd ────────────────────────────────</span>
+x = torch.tensor([<span class="nm">2.0</span>], requires_grad=<span class="kw">True</span>)
+loss = x**<span class="nm">2</span> + <span class="nm">3</span>*x + <span class="nm">1</span>
+loss.backward()
+<span class="fn">print</span>(x.grad)   <span class="cm"># tensor([7.])  ← d/dx = 2x+3 en x=2</span></pre>
+  </div>
+
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="code-file">modelo.py</div>
+      <button class="code-copy" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre class="code"><span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+
+<span class="kw">class</span> <span class="cls">MiRed</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        super().__init__()
+        self.red = nn.Sequential(
+            nn.Linear(<span class="nm">3</span>, <span class="nm">64</span>),    <span class="cm"># 3 entradas → 64 neuronas</span>
+            nn.ReLU(),
+            nn.Linear(<span class="nm">64</span>, <span class="nm">32</span>),   <span class="cm"># 64 → 32</span>
+            nn.ReLU(),
+            nn.Linear(<span class="nm">32</span>, <span class="nm">1</span>)    <span class="cm"># 32 → 1 salida</span>
+        )
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        <span class="kw">return</span> self.red(x)
+
+modelo = <span class="cls">MiRed</span>()
+<span class="fn">print</span>(<span class="fn">sum</span>(p.numel() <span class="kw">for</span> p <span class="kw">in</span> modelo.parameters()))  <span class="cm"># 2369 params</span></pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECCIÓN 5: ENTRENAMIENTO ═══════════════ -->
+<section class="section" id="seccion-5">
+  <div class="section-tag">Sección 05</div>
+  <h2 class="section-h2">El ciclo de entrenamiento</h2>
+  <p class="section-lead">
+    Cada epoch: forward → calcular pérdida → backprop → actualizar pesos. Observa el descenso del gradiente en vivo.
+  </p>
+
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:24px;margin:24px 0" class="reveal">
+    <div class="train-controls">
+      <button class="btn-action btn-primary" id="btn-train" onclick="startTraining()">▶ Iniciar entrenamiento</button>
+      <button class="btn-action btn-secondary" onclick="resetTraining()">↺ Resetear</button>
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)">
+        <span>lr</span>
+        <select id="lr-select" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 10px;font-family:var(--mono);font-size:12px">
+          <option value="0.5">0.5 (muy alto)</option>
+          <option value="0.1" selected>0.1 (alto)</option>
+          <option value="0.01">0.01 (normal)</option>
+          <option value="0.001">0.001 (bajo)</option>
+        </select>
+      </div>
+    </div>
+
+    <canvas id="train-canvas"></canvas>
+
+    <div class="train-stats">
+      <div class="train-stat-item"><div class="tsil">Epoch</div><div class="tsiv" id="ts-epoch">0</div></div>
+      <div class="train-stat-item"><div class="tsil">Loss</div><div class="tsiv" id="ts-loss">—</div></div>
+      <div class="train-stat-item"><div class="tsil">w</div><div class="tsiv" id="ts-w">—</div></div>
+      <div class="train-stat-item"><div class="tsil">Gradiente</div><div class="tsiv" id="ts-grad">—</div></div>
+    </div>
+  </div>
+
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="code-file">training_loop.py</div>
+      <button class="code-copy" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre class="code">criterio    = nn.BCEWithLogitsLoss()
+optimizador = torch.optim.Adam(modelo.parameters(), lr=<span class="nm">1e-3</span>)
+
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">200</span>):
+    <span class="cm"># 1. Forward pass</span>
+    y_pred = modelo(X_train)
+
+    <span class="cm"># 2. Calcular pérdida</span>
+    loss = criterio(y_pred, y_train)
+
+    <span class="cm"># 3. Limpiar gradientes</span>
+    optimizador.zero_grad()
+
+    <span class="cm"># 4. Backpropagation</span>
+    loss.backward()
+
+    <span class="cm"># 5. Actualizar pesos  w ← w − lr·∇w</span>
+    optimizador.step()
+
+    <span class="kw">if</span> epoch % <span class="nm">20</span> == <span class="nm">0</span>:
+        <span class="fn">print</span>(<span class="st">f"Epoch {epoch}  loss={loss.item():.4f}"</span>)</pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECCIÓN 6: QUIZ ═══════════════ -->
+<section class="section" id="seccion-6">
+  <div class="section-tag">Sección 06</div>
+  <h2 class="section-h2">Quiz Final</h2>
+  <p class="section-lead">Pon a prueba lo que aprendiste. Cada respuesta correcta suma XP.</p>
+
+  <div id="quiz-section" class="reveal">
+    <div class="quiz-header">
+      <div class="quiz-title">🎯 Pregunta <span id="q-num">1</span> de <span id="q-total">6</span></div>
+      <div class="quiz-progress-text" id="q-score-text">Score: 0</div>
+    </div>
+    <div id="q-progress-bar" style="height:3px;background:var(--border);border-radius:99px;margin-bottom:24px">
+      <div id="q-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:99px;transition:width 0.3s"></div>
+    </div>
+    <div class="quiz-question" id="q-text"></div>
+    <div class="quiz-options" id="q-options"></div>
+    <div class="quiz-feedback" id="q-feedback"></div>
+    <button class="quiz-next-btn" id="q-next" onclick="nextQuestion()">Siguiente →</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<footer>
+  <p>Creado para la clase de IA · Licenciatura · <a href="https://pytorch.org" target="_blank">pytorch.org</a></p>
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+// XP SYSTEM
+// ══════════════════════════════════════════
+let xp = 0;
+const MAX_XP = 500;
+const LEVELS = [
+  { min:0,   label:'Nivel 1 · Aprendiz' },
+  { min:100, label:'Nivel 2 · Estudiante' },
+  { min:200, label:'Nivel 3 · Practicante' },
+  { min:350, label:'Nivel 4 · Experto' },
+  { min:480, label:'Nivel 5 · Master NN' },
+];
+
+function addXP(amount, msg) {
+  xp = Math.min(xp + amount, MAX_XP);
+  document.getElementById('xp-bar').style.width = (xp/MAX_XP*100) + '%';
+  document.getElementById('xp-label').textContent = `${xp} / ${MAX_XP} XP`;
+
+  const lvl = LEVELS.slice().reverse().find(l => xp >= l.min);
+  document.getElementById('level-badge').textContent = lvl.label;
+
+  const toast = document.getElementById('xp-toast');
+  toast.textContent = `+${amount} XP`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function showAchievement(icon, title, desc) {
+  const p = document.getElementById('achievement-popup');
+  document.getElementById('ach-icon').textContent = icon;
+  document.getElementById('ach-title').textContent = title;
+  document.getElementById('ach-desc').textContent = desc;
+  p.classList.add('show');
+  setTimeout(() => p.classList.remove('show'), 3200);
+}
+
+// ══════════════════════════════════════════
+// HERO NEURAL NET BG
+// ══════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('nn-bg');
+  const ctx    = canvas.getContext('2d');
+  let W, H, nodes, t = 0;
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    buildNodes();
+  }
+
+  function buildNodes() {
+    nodes = Array.from({length:40}, () => ({
+      x: Math.random()*W,
+      y: Math.random()*H,
+      vx: (Math.random()-.5)*.4,
+      vy: (Math.random()-.5)*.4,
+    }));
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    t += 0.008;
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x<0||n.x>W) n.vx*=-1;
+      if (n.y<0||n.y>H) n.vy*=-1;
+    });
+    for (let i=0;i<nodes.length;i++) {
+      for (let j=i+1;j<nodes.length;j++) {
+        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if (d<160) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(79,142,247,${(1-d/160)*.4})`;
+          ctx.lineWidth=.8;
+          ctx.moveTo(nodes[i].x,nodes[i].y);
+          ctx.lineTo(nodes[j].x,nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach((n,i) => {
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,3,0,Math.PI*2);
+      ctx.fillStyle=`rgba(79,142,247,0.7)`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  resize(); draw();
+})();
+
+// ══════════════════════════════════════════
+// NEURONA CANVAS
+// ══════════════════════════════════════════
+let actFn = 'sigmoid';
+
+function sigmoid(z) { return 1/(1+Math.exp(-z)); }
+function relu(z)    { return Math.max(0,z); }
+function tanh_(z)   { return Math.tanh(z); }
+function linear(z)  { return z; }
+
+function activate(z) {
+  if (actFn==='sigmoid') return sigmoid(z);
+  if (actFn==='relu')    return relu(z);
+  if (actFn==='tanh')    return tanh_(z);
+  return linear(z);
+}
+
+function setAct(name, btn) {
+  actFn = name;
+  document.querySelectorAll('.act-pills .pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateNeuron();
+}
+
+function updateNeuron() {
+  const x1 = +document.getElementById('sl-x1').value;
+  const x2 = +document.getElementById('sl-x2').value;
+  const w1 = +document.getElementById('sl-w1').value;
+  const w2 = +document.getElementById('sl-w2').value;
+  const b  = +document.getElementById('sl-b').value;
+
+  document.getElementById('x1v').textContent = x1.toFixed(1);
+  document.getElementById('x2v').textContent = x2.toFixed(1);
+  document.getElementById('w1v').textContent = w1.toFixed(1);
+  document.getElementById('w2v').textContent = w2.toFixed(1);
+  document.getElementById('bv').textContent  = b.toFixed(1);
+
+  const z = w1*x1 + w2*x2 + b;
+  const y = activate(z);
+
+  document.getElementById('z-out').textContent = z.toFixed(4);
+  document.getElementById('y-out').textContent = y.toFixed(4);
+  document.getElementById('y-out').style.color =
+    y > 0.5 ? 'var(--green)' : 'var(--orange)';
+
+  drawNeuron(x1, x2, w1, w2, b, z, y);
+}
+
+function drawNeuron(x1, x2, w1, w2, b, z, y) {
+  const canvas = document.getElementById('neurona-canvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Coordenadas
+  const ix1 = {x:W*.15, y:H*.3};
+  const ix2 = {x:W*.15, y:H*.7};
+  const neuron = {x:W*.5, y:H*.5};
+  const out  = {x:W*.85, y:H*.5};
+
+  // Grosor de conexiones por magnitud de peso
+  function drawConn(from, to, weight, label) {
+    const abs = Math.abs(weight);
+    const col = weight>=0 ? `rgba(79,142,247,${0.3+abs*.5})` : `rgba(249,115,22,${0.3+abs*.5})`;
+    ctx.beginPath();
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 1 + abs * 2;
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x,   to.y);
+    ctx.stroke();
+
+    // Label peso
+    const mx = (from.x+to.x)/2, my = (from.y+to.y)/2;
+    ctx.fillStyle = col;
+    ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(label, mx, my-6);
+  }
+
+  drawConn(ix1, neuron, w1, `w₁=${w1.toFixed(1)}`);
+  drawConn(ix2, neuron, w2, `w₂=${w2.toFixed(1)}`);
+
+  // Nodos de entrada
+  [[ix1, `x₁=${x1.toFixed(1)}`], [ix2, `x₂=${x2.toFixed(1)}`]].forEach(([pos, lbl]) => {
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, 22, 0, Math.PI*2);
+    ctx.fillStyle = '#1a1e2a';
+    ctx.fill();
+    ctx.strokeStyle = '#4f8ef7';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#4f8ef7';
+    ctx.font = `12px 'JetBrains Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(lbl, pos.x, pos.y);
+  });
+
+  // Neurona central (color según activación)
+  const nColor = y > 0.5 ? '#39d98a' : '#f97316';
+  const grd = ctx.createRadialGradient(neuron.x, neuron.y, 0, neuron.x, neuron.y, 32);
+  grd.addColorStop(0, nColor+'99');
+  grd.addColorStop(1, nColor+'11');
+  ctx.beginPath();
+  ctx.arc(neuron.x, neuron.y, 32, 0, Math.PI*2);
+  ctx.fillStyle = grd;
+  ctx.fill();
+  ctx.strokeStyle = nColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = 'white';
+  ctx.font = `bold 11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`f(z)`, neuron.x, neuron.y-7);
+  ctx.fillStyle = nColor;
+  ctx.font = `12px 'JetBrains Mono', monospace`;
+  ctx.fillText(actFn, neuron.x, neuron.y+9);
+
+  // Bias label
+  ctx.fillStyle = '#a855f7';
+  ctx.font = `11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText(`b=${b.toFixed(1)}`, neuron.x, neuron.y-50);
+
+  // Flecha salida
+  ctx.beginPath();
+  ctx.strokeStyle = nColor;
+  ctx.lineWidth = 2;
+  ctx.moveTo(neuron.x+32, neuron.y);
+  ctx.lineTo(out.x-22, neuron.y);
+  ctx.stroke();
+
+  // Nodo salida
+  ctx.beginPath();
+  ctx.arc(out.x, out.y, 22, 0, Math.PI*2);
+  ctx.fillStyle = '#1a1e2a';
+  ctx.fill();
+  ctx.strokeStyle = nColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = nColor;
+  ctx.font = `11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`ŷ`, out.x, out.y-7);
+  ctx.font = `bold 12px 'JetBrains Mono', monospace`;
+  ctx.fillText(y.toFixed(2), out.x, out.y+7);
+}
+
+// ══════════════════════════════════════════
+// MLP CANVAS
+// ══════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('mlp-canvas');
+  const ctx    = canvas.getContext('2d');
+  let activeLayers = [];
+  let animProgress = 0;
+  let animating = false;
+
+  const LAYERS = [3, 4, 4, 2];
+  const COLORS = ['#4f8ef7', '#a855f7', '#a855f7', '#39d98a'];
+
+  function getPositions(W, H) {
+    const layerX = LAYERS.map((_, i) => W * (0.15 + i * 0.23));
+    return LAYERS.map((n, li) => {
+      const cx = layerX[li];
+      const step = H / (n + 1);
+      return Array.from({length:n}, (_,ni) => ({x:cx, y:step*(ni+1)}));
+    });
+  }
+
+  function draw(highlight=-1) {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+    const pos = getPositions(W,H);
+
+    // Connections
+    for (let l=0; l<LAYERS.length-1; l++) {
+      for (let i=0; i<LAYERS[l]; i++) {
+        for (let j=0; j<LAYERS[l+1]; j++) {
+          const active = highlight >= l+1;
+          ctx.beginPath();
+          ctx.strokeStyle = active
+            ? `rgba(79,142,247,0.55)` : `rgba(255,255,255,0.04)`;
+          ctx.lineWidth = active ? 1 : 0.5;
+          ctx.moveTo(pos[l][i].x, pos[l][i].y);
+          ctx.lineTo(pos[l+1][j].x, pos[l+1][j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Neurons
+    pos.forEach((layer, li) => {
+      layer.forEach((n, ni) => {
+        const active = highlight >= li;
+        const r = 16;
+        const col = COLORS[li];
+        const grd = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,r);
+        grd.addColorStop(0, active ? col+'cc' : col+'22');
+        grd.addColorStop(1, 'transparent');
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,r,0,Math.PI*2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+        ctx.strokeStyle = active ? col : col+'44';
+        ctx.lineWidth = active ? 1.5 : 0.8;
+        ctx.stroke();
+      });
+    });
+
+    // Labels
+    const labels = ['Input', 'Hidden 1', 'Hidden 2', 'Output'];
+    pos.forEach((layer,li) => {
+      ctx.fillStyle = COLORS[li]+'aa';
+      ctx.font = `11px 'JetBrains Mono', monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(labels[li], layer[0].x, H-8);
+    });
+  }
+
+  canvas.addEventListener('click', function(e) {
+    if (animating) return;
+    animating = true;
+    let step = 0;
+    const interval = setInterval(() => {
+      draw(step);
+      step++;
+      if (step > LAYERS.length) {
+        clearInterval(interval);
+        animating = false;
+        addXP(20, '+20 XP — Forward pass!');
+      }
+    }, 280);
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { draw(-1); obs.disconnect(); }
+  });
+  obs.observe(canvas);
+
+  window.addEventListener('resize', () => draw(-1));
+  draw(-1);
+})();
+
+// ══════════════════════════════════════════
+// TRAINING VIZ
+// ══════════════════════════════════════════
+let trainInterval = null;
+let trainData = { w: -1.5, history: [], epoch: 0 };
+
+function lossFunc(w)  { return (w-2)**2 + 1; }
+function gradFunc(w)  { return 2*(w-2); }
+
+function resetTraining() {
+  clearInterval(trainInterval);
+  trainData = { w: -1.5, history: [], epoch: 0 };
+  document.getElementById('btn-train').textContent = '▶ Iniciar entrenamiento';
+  document.getElementById('ts-epoch').textContent = '0';
+  document.getElementById('ts-loss').textContent = '—';
+  document.getElementById('ts-w').textContent = '—';
+  document.getElementById('ts-grad').textContent = '—';
+  drawTraining();
+}
+
+function startTraining() {
+  if (trainInterval) { clearInterval(trainInterval); trainInterval = null; document.getElementById('btn-train').textContent = '▶ Iniciar'; return; }
+  document.getElementById('btn-train').textContent = '⏸ Pausar';
+  const lr = parseFloat(document.getElementById('lr-select').value);
+
+  trainInterval = setInterval(() => {
+    if (trainData.epoch >= 60) { clearInterval(trainInterval); trainInterval=null; document.getElementById('btn-train').textContent='▶ Iniciar'; addXP(60, '+60 XP'); showAchievement('🎓','Gradient Descent','Completaste el entrenamiento'); return; }
+    const g = gradFunc(trainData.w);
+    trainData.w -= lr * g;
+    trainData.history.push({ epoch: trainData.epoch, loss: lossFunc(trainData.w), w: trainData.w });
+    trainData.epoch++;
+
+    document.getElementById('ts-epoch').textContent = trainData.epoch;
+    document.getElementById('ts-loss').textContent  = lossFunc(trainData.w).toFixed(4);
+    document.getElementById('ts-w').textContent     = trainData.w.toFixed(4);
+    document.getElementById('ts-grad').textContent  = g.toFixed(4);
+
+    drawTraining();
+  }, 80);
+}
+
+function drawTraining() {
+  const canvas = document.getElementById('train-canvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const PAD = 40;
+  const wMin=-2, wMax=4, lMin=0, lMax=10;
+
+  function wx(w) { return PAD + (w-wMin)/(wMax-wMin)*(W-2*PAD); }
+  function wy(l) { return H - PAD - (l-lMin)/(lMax-lMin)*(H-2*PAD); }
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 0.5;
+  for (let i=0; i<=5; i++) {
+    const y = PAD + i*(H-2*PAD)/5;
+    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W-PAD, y); ctx.stroke();
+  }
+
+  // Loss curve
+  ctx.beginPath();
+  for (let w=wMin; w<=wMax; w+=0.05) {
+    const l = lossFunc(w);
+    if (w===wMin) ctx.moveTo(wx(w), wy(l));
+    else ctx.lineTo(wx(w), wy(l));
+  }
+  ctx.strokeStyle = 'rgba(79,142,247,0.5)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Trajectory
+  if (trainData.history.length > 1) {
+    ctx.beginPath();
+    trainData.history.forEach((p,i) => {
+      if (i===0) ctx.moveTo(wx(p.w), wy(p.loss));
+      else ctx.lineTo(wx(p.w), wy(p.loss));
+    });
+    ctx.strokeStyle = 'rgba(168,85,247,0.7)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Current point
+  if (trainData.history.length > 0) {
+    const last = trainData.history[trainData.history.length-1];
+    ctx.beginPath();
+    ctx.arc(wx(last.w), wy(last.loss), 7, 0, Math.PI*2);
+    ctx.fillStyle = '#f97316';
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  // Minimum line
+  ctx.strokeStyle = 'rgba(57,217,138,0.4)';
+  ctx.setLineDash([4,4]);
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(wx(2), PAD); ctx.lineTo(wx(2), H-PAD); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle = 'rgba(57,217,138,0.7)';
+  ctx.font = `10px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText('óptimo', wx(2), PAD-6);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = `11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText('w', W/2, H-6);
+}
+
+drawTraining();
+
+// ══════════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════════
+const QUESTIONS = [
+  {
+    q: "¿Por qué las redes neuronales necesitan funciones de activación no lineales?",
+    opts: [
+      "Para que los cálculos sean más rápidos en GPU",
+      "Porque sin ellas, múltiples capas lineales son equivalentes a una sola capa lineal",
+      "Para reducir el uso de memoria",
+      "Para evitar el sobreajuste"
+    ],
+    correct: 1,
+    xp: 80,
+    feedback: "✓ Exacto. Sin no linealidad, W₂(W₁x+b₁)+b₂ = W'x+b' — solo una transformación lineal. La no linealidad permite aprender funciones complejas."
+  },
+  {
+    q: "¿Qué hace optimizer.zero_grad() en PyTorch y por qué es necesario?",
+    opts: [
+      "Reinicia los pesos del modelo a cero",
+      "Limpia los gradientes acumulados del paso anterior para que no se sumen",
+      "Establece el learning rate en cero temporalmente",
+      "Congela las capas del modelo"
+    ],
+    correct: 1,
+    xp: 80,
+    feedback: "✓ PyTorch acumula gradientes por defecto. Si no los limpiamos, los gradientes de epochs anteriores se suman, causando actualizaciones incorrectas."
+  },
+  {
+    q: "Un MLP tiene 2 entradas, 1 capa oculta de 8 neuronas y 1 salida. ¿Cuántos parámetros tiene en total?",
+    opts: ["18", "33", "25", "41"],
+    correct: 1,
+    xp: 100,
+    feedback: "✓ W¹: 2×8=16 + b¹: 8 = 24 parámetros. W²: 8×1=8 + b²: 1 = 9 parámetros. Total: 24+9 = 33."
+  },
+  {
+    q: "¿Cuál es la principal ventaja de ReLU sobre Sigmoid en capas ocultas?",
+    opts: [
+      "Sigmoid es más costosa computacionalmente",
+      "ReLU evita el problema del gradiente que desaparece (vanishing gradient)",
+      "ReLU produce valores entre 0 y 1",
+      "ReLU requiere menos datos de entrenamiento"
+    ],
+    correct: 1,
+    xp: 80,
+    feedback: "✓ Sigmoid satura a 0 o 1, haciendo el gradiente ≈ 0 y frenando el aprendizaje en capas profundas. ReLU tiene gradiente constante de 1 para z>0."
+  },
+  {
+    q: "En el descenso del gradiente, ¿qué sucede si el learning rate es demasiado alto?",
+    opts: [
+      "El modelo aprende muy lento pero llega al mínimo",
+      "El modelo puede divergir u oscilar sin converger",
+      "Los gradientes se vuelven exactamente cero",
+      "El modelo hace más epochs automáticamente"
+    ],
+    correct: 1,
+    xp: 80,
+    feedback: "✓ Un lr muy alto hace que los pasos sobrepasen el mínimo repetidamente. El modelo puede divergir completamente (loss → ∞)."
+  },
+  {
+    q: "¿Qué hace loss.backward() en PyTorch?",
+    opts: [
+      "Reinicia el modelo a la iteración anterior",
+      "Calcula los gradientes de la pérdida respecto a todos los parámetros usando la regla de la cadena",
+      "Aplica una transformación inversa al output",
+      "Mueve los tensores de GPU a CPU"
+    ],
+    correct: 1,
+    xp: 80,
+    feedback: "✓ backward() implementa backpropagation: aplica la regla de la cadena para calcular ∂L/∂w para cada parámetro. Esos gradientes se usan en optimizer.step()."
+  }
+];
+
+let qIdx = 0, score = 0;
+const answered = new Set();
+
+function renderQuestion() {
+  const q = QUESTIONS[qIdx];
+  document.getElementById('q-num').textContent = qIdx+1;
+  document.getElementById('q-total').textContent = QUESTIONS.length;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-progress-fill').style.width = (qIdx/QUESTIONS.length*100)+'%';
+  document.getElementById('q-score-text').textContent = `Score: ${score}`;
+
+  const optsEl = document.getElementById('q-options');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.textContent = `${['A','B','C','D'][i]}. ${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    optsEl.appendChild(btn);
+  });
+
+  document.getElementById('q-feedback').className = 'quiz-feedback';
+  document.getElementById('q-next').className = 'quiz-next-btn';
+}
+
+function selectAnswer(i) {
+  if (answered.has(qIdx)) return;
+  answered.add(qIdx);
+  const q = QUESTIONS[qIdx];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.classList.add('answered'));
+  opts[i].classList.add(i===q.correct ? 'correct' : 'wrong');
+  opts[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('q-feedback');
+  if (i===q.correct) {
+    fb.textContent = q.feedback;
+    fb.className = 'quiz-feedback show ok';
+    score += q.xp;
+    addXP(q.xp, `+${q.xp} XP`);
+    if (qIdx===2) showAchievement('🧮','Matemático','¡Calculaste los parámetros correctamente!');
+  } else {
+    fb.textContent = `✗ No es correcto. ${q.feedback}`;
+    fb.className = 'quiz-feedback show fail';
+  }
+
+  document.getElementById('q-score-text').textContent = `Score: ${score}`;
+  document.getElementById('q-next').className = 'quiz-next-btn show';
+
+  // Check progress dot
+  updateProgressDots(5);
+}
+
+function nextQuestion() {
+  qIdx++;
+  if (qIdx >= QUESTIONS.length) {
+    showFinalScore();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showFinalScore() {
+  const pct = Math.round(score / QUESTIONS.reduce((a,q)=>a+q.xp,0)*100);
+  document.getElementById('quiz-section').innerHTML = `
+    <div style="text-align:center;padding:24px 0">
+      <div style="font-size:56px;margin-bottom:16px">${pct>=80?'🏆':pct>=60?'⭐':'💡'}</div>
+      <div style="font-family:var(--display);font-size:28px;font-weight:700;margin-bottom:8px;color:white">
+        ${pct}%
+      </div>
+      <div style="font-size:15px;color:var(--muted);margin-bottom:24px">
+        ${score} / ${QUESTIONS.reduce((a,q)=>a+q.xp,0)} XP en el quiz
+      </div>
+      <div style="font-size:14px;color:${pct>=80?'var(--green)':pct>=60?'var(--blue)':'var(--orange)'}">
+        ${pct>=80 ? '¡Excelente! Dominas los fundamentos de Deep Learning.' :
+          pct>=60 ? 'Buen trabajo. Repasa los temas donde fallaste.' :
+          'Sigue practicando. Vuelve a las secciones y repite el quiz.'}
+      </div>
+    </div>`;
+  if (pct >= 80) showAchievement('🏆', '¡Deep Learner!', 'Terminaste la clase con más del 80%');
+}
+
+// ══════════════════════════════════════════
+// SCROLL / REVEAL / PROGRESS
+// ══════════════════════════════════════════
+const sectionIds = ['seccion-1','seccion-2','seccion-3','seccion-4','seccion-5','seccion-6'];
+const dotsEls = document.querySelectorAll('.progress-dots .dot');
+const sectionXP = [60, 60, 60, 60, 60, 0];
+const awardedSections = new Set();
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Timeline items
+const tlObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.2 });
+document.querySelectorAll('.tl-item').forEach((el,i) => {
+  el.style.transitionDelay = (i*0.1)+'s';
+  tlObserver.observe(el);
+});
+
+// Section progress tracker
+const secObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const idx = sectionIds.indexOf(entry.target.id);
+    if (idx === -1) return;
+    dotsEls.forEach((d,i) => {
+      d.classList.remove('active','done');
+      if (i < idx) d.classList.add('done');
+      else if (i === idx) d.classList.add('active');
+    });
+    if (!awardedSections.has(idx) && idx < 5) {
+      awardedSections.add(idx);
+      setTimeout(() => addXP(sectionXP[idx]), 600);
+      if (idx===1) showAchievement('⚡','Primera neurona','Exploraste el simulador de neurona');
+      if (idx===3) showAchievement('🔥','PyTorchero','Llegaste a la sección de PyTorch');
+    }
+  });
+}, { threshold: 0.4 });
+
+sectionIds.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) secObserver.observe(el);
+});
+
+function updateProgressDots(idx) {
+  dotsEls.forEach((d,i) => {
+    d.classList.remove('active','done');
+    if (i < idx) d.classList.add('done');
+    else if (i===idx) d.classList.add('active');
+  });
+}
+
+// ══════════════════════════════════════════
+// CODE COPY
+// ══════════════════════════════════════════
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = '✓ Copiado';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  });
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+updateNeuron();
+renderQuestion();
+</script>
+</body>
+</html>
