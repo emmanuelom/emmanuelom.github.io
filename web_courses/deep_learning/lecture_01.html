@@ -734,7 +734,118 @@ footer a { color: var(--blue); text-decoration: none; }
 }
 .ach-desc { font-size: 12px; color: var(--muted); }
 
+
+
+/* ─── COURSE SIDEBAR / MATH / EXERCISES ───── */
+#course-nav {
+  position: fixed;
+  top: 58px;
+  left: 18px;
+  z-index: 900;
+  width: 210px;
+  background: rgba(19,22,30,0.82);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px;
+  backdrop-filter: blur(12px);
+}
+#course-nav .nav-title {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+}
+#course-nav a {
+  display: block;
+  padding: 7px 9px;
+  border-radius: 9px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+  line-height: 1.25;
+}
+#course-nav a:hover { background: var(--bg3); color: var(--text); }
+.math-card {
+  background: linear-gradient(135deg, rgba(79,142,247,0.10), rgba(168,85,247,0.08));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 22px 0;
+  overflow-x: auto;
+}
+.math-card .math-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--blue);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.tensor-stack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+.tensor-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+}
+.tensor-dim {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--blue);
+}
+.tensor-shape {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  margin: 6px 0;
+}
+.tensor-desc { font-size: 12px; color: var(--muted); }
+.mini-exercise {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  margin: 28px 0;
+}
+.mini-exercise h3 {
+  font-family: var(--display);
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.exercise-input {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-family: var(--mono);
+  width: 140px;
+  margin-right: 8px;
+}
+.exercise-feedback { margin-top: 12px; font-size: 13px; color: var(--muted); }
+@media (max-width: 1180px) { #course-nav { display: none; } }
+@media (max-width: 720px) {
+  .hero-stats { flex-direction: column; gap: 18px; }
+  #hud { padding: 8px 12px; gap: 8px; }
+  .progress-dots { display: none; }
+  .neuron-output { grid-template-columns: 1fr; }
+}
+
 </style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
 
@@ -747,6 +858,7 @@ footer a { color: var(--blue); text-decoration: none; }
   <div class="progress-dots" id="progress-dots">
     <div class="dot active" title="¿Qué es DL?"></div>
     <div class="dot" title="La neurona"></div>
+    <div class="dot" title="Tensores"></div>
     <div class="dot" title="Red neuronal"></div>
     <div class="dot" title="PyTorch"></div>
     <div class="dot" title="Entrenamiento"></div>
@@ -766,6 +878,17 @@ footer a { color: var(--blue); text-decoration: none; }
   </div>
 </div>
 
+<nav id="course-nav" aria-label="Navegación del curso">
+  <div class="nav-title">Deep Learning · Clase 01</div>
+  <a href="#seccion-1">01 · ¿Qué es DL?</a>
+  <a href="#seccion-2">02 · Neurona artificial</a>
+  <a href="#seccion-3">03 · Tensores y shapes</a>
+  <a href="#seccion-4">04 · MLP</a>
+  <a href="#seccion-5">05 · PyTorch</a>
+  <a href="#seccion-6">06 · Entrenamiento</a>
+  <a href="#seccion-7">07 · Quiz final</a>
+</nav>
+
 <!-- ═══════════════ HERO ═══════════════ -->
 <section id="hero">
   <canvas id="nn-bg"></canvas>
@@ -783,11 +906,11 @@ footer a { color: var(--blue); text-decoration: none; }
     </a>
     <div class="hero-stats">
       <div class="stat">
-        <div class="stat-num" id="cnt-sections">6</div>
+        <div class="stat-num" id="cnt-sections">7</div>
         <div class="stat-lbl">Secciones</div>
       </div>
       <div class="stat">
-        <div class="stat-num">500</div>
+        <div class="stat-num">680</div>
         <div class="stat-lbl">XP disponibles</div>
       </div>
       <div class="stat">
@@ -901,6 +1024,13 @@ footer a { color: var(--blue); text-decoration: none; }
     Arrastra los sliders y observa cómo cambia la salida en tiempo real.
   </p>
 
+  <div class="math-card reveal">
+    <div class="math-label">Modelo matemático</div>
+    \\[
+      z=\sum_{i=1}^{n} w_i x_i + b, \qquad \hat{y}=f(z)
+    \\]
+  </div>
+
   <div id="neurona-demo" class="reveal">
     <canvas id="neurona-canvas"></canvas>
     <div class="sliders-grid">
@@ -971,13 +1101,67 @@ w = np.array([<span class="nm">0.8</span>, <span class="nm">-0.5</span>])
 z, y_hat = <span class="fn">neurona</span>(x, w, b=<span class="nm">0.2</span>)
 <span class="fn">print</span>(<span class="st">f"z={z:.3f}  ŷ={y_hat:.3f}"</span>)</pre>
   </div>
+  <div class="mini-exercise reveal">
+    <h3>Ejercicio rápido · cálculo de una neurona</h3>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:12px">
+      Si \(x=[1,2]\), \(w=[0.5,-1]\) y \(b=0\), ¿cuánto vale \(z=w\cdot x+b\)?
+    </p>
+    <input class="exercise-input" id="ex-z" type="number" step="0.1" placeholder="z = ?">
+    <button class="btn-action btn-primary" onclick="checkMiniExercise()">Verificar</button>
+    <div class="exercise-feedback" id="ex-z-feedback"></div>
+  </div>
 </section>
 
 <hr class="divider">
 
-<!-- ═══════════════ SECCIÓN 3: RED NEURONAL ═══════════════ -->
+<!-- ═══════════════ SECCIÓN 3: TENSORES ═══════════════ -->
 <section class="section" id="seccion-3">
   <div class="section-tag">Sección 03</div>
+  <h2 class="section-h2">Tensores y shapes</h2>
+  <p class="section-lead">
+    Antes de construir redes profundas, conviene dominar la idea de tensor. En PyTorch, casi todo es un tensor: entradas, pesos, activaciones, imágenes, batches y gradientes.
+  </p>
+
+  <div class="tensor-stack reveal">
+    <div class="tensor-card"><div class="tensor-dim">0D</div><div class="tensor-shape">()</div><div class="tensor-desc">Escalar: una pérdida, un bias o un learning rate.</div></div>
+    <div class="tensor-card"><div class="tensor-dim">1D</div><div class="tensor-shape">(features)</div><div class="tensor-desc">Vector: una muestra con varias características.</div></div>
+    <div class="tensor-card"><div class="tensor-dim">2D</div><div class="tensor-shape">(samples, features)</div><div class="tensor-desc">Matriz: dataset tabular o batch de vectores.</div></div>
+    <div class="tensor-card"><div class="tensor-dim">3D</div><div class="tensor-shape">(C, H, W)</div><div class="tensor-desc">Imagen: canales, alto y ancho.</div></div>
+    <div class="tensor-card"><div class="tensor-dim">4D</div><div class="tensor-shape">(N, C, H, W)</div><div class="tensor-desc">Batch de imágenes para una CNN.</div></div>
+  </div>
+
+  <div class="math-card reveal">
+    <div class="math-label">Regla práctica</div>
+    \\[
+      X \in \mathbb{R}^{N\times d}, \qquad W \in \mathbb{R}^{d\times h}, \qquad H=f(XW+b)
+    \\]
+  </div>
+
+  <div class="code-block reveal">
+    <div class="code-header">
+      <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="code-file">shapes.py</div>
+      <button class="code-copy" onclick="copyCode(this)">Copiar</button>
+    </div>
+    <pre class="code"><span class="kw">import</span> torch
+
+<span class="cm"># Batch de 32 imágenes RGB de 64×64</span>
+X = torch.randn(<span class="nm">32</span>, <span class="nm">3</span>, <span class="nm">64</span>, <span class="nm">64</span>)
+<span class="fn">print</span>(X.shape)  <span class="cm"># torch.Size([32, 3, 64, 64])</span>
+
+<span class="cm"># Dataset tabular: 100 muestras, 10 features</span>
+X_tab = torch.randn(<span class="nm">100</span>, <span class="nm">10</span>)
+capa = torch.nn.Linear(<span class="nm">10</span>, <span class="nm">4</span>)
+H = capa(X_tab)
+<span class="fn">print</span>(H.shape)  <span class="cm"># torch.Size([100, 4])</span></pre>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════ SECCIÓN 4: RED NEURONAL ═══════════════ -->
+<section class="section" id="seccion-4">
+  <div class="section-tag">Sección 04</div>
   <h2 class="section-h2">Red neuronal multicapa (MLP)</h2>
   <p class="section-lead">
     Un MLP apila capas de neuronas. La información fluye del input al output en el <em>forward pass</em>.
@@ -1008,13 +1192,26 @@ z, y_hat = <span class="fn">neurona</span>(x, w, b=<span class="nm">0.2</span>)
       </div>
     </div>
   </div>
+
+  <div class="card-grid reveal">
+    <div class="card">
+      <div class="card-icon">🖼️</div>
+      <div class="card-title">Siguiente paso: CNN</div>
+      <div class="card-body">Las redes convolucionales aprovechan estructura espacial: píxeles vecinos, filtros y mapas de características.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧠</div>
+      <div class="card-title">Después: Transformers</div>
+      <div class="card-body">Los Transformers modelan relaciones entre tokens usando atención. Son la base de muchos modelos modernos.</div>
+    </div>
+  </div>
 </section>
 
 <hr class="divider">
 
-<!-- ═══════════════ SECCIÓN 4: PYTORCH ═══════════════ -->
-<section class="section" id="seccion-4">
-  <div class="section-tag">Sección 04</div>
+<!-- ═══════════════ SECCIÓN 5: PYTORCH ═══════════════ -->
+<section class="section" id="seccion-5">
+  <div class="section-tag">Sección 05</div>
   <h2 class="section-h2">Introducción a PyTorch</h2>
   <p class="section-lead">
     PyTorch usa tensores (como arrays NumPy) y calcula gradientes automáticamente con <code style="font-family:var(--mono);color:var(--blue)">autograd</code>. Así podemos entrenar redes con unas pocas líneas.
@@ -1072,9 +1269,9 @@ modelo = <span class="cls">MiRed</span>()
 
 <hr class="divider">
 
-<!-- ═══════════════ SECCIÓN 5: ENTRENAMIENTO ═══════════════ -->
-<section class="section" id="seccion-5">
-  <div class="section-tag">Sección 05</div>
+<!-- ═══════════════ SECCIÓN 6: ENTRENAMIENTO ═══════════════ -->
+<section class="section" id="seccion-6">
+  <div class="section-tag">Sección 06</div>
   <h2 class="section-h2">El ciclo de entrenamiento</h2>
   <p class="section-lead">
     Cada epoch: forward → calcular pérdida → backprop → actualizar pesos. Observa el descenso del gradiente en vivo.
@@ -1137,9 +1334,9 @@ optimizador = torch.optim.Adam(modelo.parameters(), lr=<span class="nm">1e-3</sp
 
 <hr class="divider">
 
-<!-- ═══════════════ SECCIÓN 6: QUIZ ═══════════════ -->
-<section class="section" id="seccion-6">
-  <div class="section-tag">Sección 06</div>
+<!-- ═══════════════ SECCIÓN 7: QUIZ ═══════════════ -->
+<section class="section" id="seccion-7">
+  <div class="section-tag">Sección 07</div>
   <h2 class="section-h2">Quiz Final</h2>
   <p class="section-lead">Pon a prueba lo que aprendiste. Cada respuesta correcta suma XP.</p>
 
@@ -1169,7 +1366,7 @@ optimizador = torch.optim.Adam(modelo.parameters(), lr=<span class="nm">1e-3</sp
 // XP SYSTEM
 // ══════════════════════════════════════════
 let xp = 0;
-const MAX_XP = 500;
+const MAX_XP = 680;
 const LEVELS = [
   { min:0,   label:'Nivel 1 · Aprendiz' },
   { min:100, label:'Nivel 2 · Estudiante' },
@@ -1185,6 +1382,7 @@ function addXP(amount, msg) {
 
   const lvl = LEVELS.slice().reverse().find(l => xp >= l.min);
   document.getElementById('level-badge').textContent = lvl.label;
+  localStorage.setItem('dl_lecture01_xp', String(xp));
 
   const toast = document.getElementById('xp-toast');
   toast.textContent = `+${amount} XP`;
@@ -1751,7 +1949,7 @@ function selectAnswer(i) {
   document.getElementById('q-next').className = 'quiz-next-btn show';
 
   // Check progress dot
-  updateProgressDots(5);
+  updateProgressDots(6);
 }
 
 function nextQuestion() {
@@ -1786,9 +1984,9 @@ function showFinalScore() {
 // ══════════════════════════════════════════
 // SCROLL / REVEAL / PROGRESS
 // ══════════════════════════════════════════
-const sectionIds = ['seccion-1','seccion-2','seccion-3','seccion-4','seccion-5','seccion-6'];
+const sectionIds = ['seccion-1','seccion-2','seccion-3','seccion-4','seccion-5','seccion-6','seccion-7'];
 const dotsEls = document.querySelectorAll('.progress-dots .dot');
-const sectionXP = [60, 60, 60, 60, 60, 0];
+const sectionXP = [60, 60, 60, 60, 60, 60, 0];
 const awardedSections = new Set();
 
 const observer = new IntersectionObserver((entries) => {
@@ -1821,11 +2019,11 @@ const secObserver = new IntersectionObserver(entries => {
       if (i < idx) d.classList.add('done');
       else if (i === idx) d.classList.add('active');
     });
-    if (!awardedSections.has(idx) && idx < 5) {
+    if (!awardedSections.has(idx) && idx < 6) {
       awardedSections.add(idx);
       setTimeout(() => addXP(sectionXP[idx]), 600);
       if (idx===1) showAchievement('⚡','Primera neurona','Exploraste el simulador de neurona');
-      if (idx===3) showAchievement('🔥','PyTorchero','Llegaste a la sección de PyTorch');
+      if (idx===4) showAchievement('🔥','PyTorchero','Llegaste a la sección de PyTorch');
     }
   });
 }, { threshold: 0.4 });
@@ -1854,9 +2052,37 @@ function copyCode(btn) {
   });
 }
 
+function restoreProgress() {
+  const savedXP = parseInt(localStorage.getItem('dl_lecture01_xp') || '0', 10);
+  if (!Number.isNaN(savedXP) && savedXP > 0) {
+    xp = Math.min(savedXP, MAX_XP);
+    document.getElementById('xp-bar').style.width = (xp/MAX_XP*100) + '%';
+    document.getElementById('xp-label').textContent = `${xp} / ${MAX_XP} XP`;
+    const lvl = LEVELS.slice().reverse().find(l => xp >= l.min);
+    document.getElementById('level-badge').textContent = lvl.label;
+  }
+}
+
+function checkMiniExercise() {
+  const ans = parseFloat(document.getElementById('ex-z').value);
+  const fb = document.getElementById('ex-z-feedback');
+  if (Math.abs(ans - (-1.5)) < 1e-6) {
+    fb.textContent = '✓ Correcto: z = 0.5(1) + (-1)(2) + 0 = -1.5';
+    fb.style.color = 'var(--green)';
+    if (!localStorage.getItem('dl_lecture01_ex_z_done')) {
+      addXP(40);
+      localStorage.setItem('dl_lecture01_ex_z_done', '1');
+    }
+  } else {
+    fb.textContent = 'Revisa el producto punto: multiplica cada entrada por su peso y suma el bias.';
+    fb.style.color = 'var(--orange)';
+  }
+}
+
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
+restoreProgress();
 updateNeuron();
 renderQuestion();
 </script>
